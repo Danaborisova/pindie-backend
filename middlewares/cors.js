@@ -5,6 +5,7 @@ const allowedCors = [
 ];
 
 function cors(req, res, next) {
+    console.log("cors - работает")
     const { origin } = req.headers;
 
     if (allowedCors.includes(origin)) { // Если это наш друг

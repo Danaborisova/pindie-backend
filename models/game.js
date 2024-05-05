@@ -25,7 +25,7 @@ const categoryModel = require('./category');
     },
     users: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: userModel, // не понимает что такое userModel
+      ref: userModel, 
     }],
     categories: [{
       type: mongoose.Schema.Types.ObjectId,

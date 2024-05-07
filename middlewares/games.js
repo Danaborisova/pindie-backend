@@ -1,8 +1,11 @@
 const games = require("../models/game");
 
 const findAllGames = async (req, res, next) => {
-  console.log("Миддлвар! Ищем все игры!")
-  // По GET-запросу на эндпоинт /games найдём все документы категорий
+  if(req.query["categories.name"]) { 
+    req.gamesArray = await games.findGameByCategory(req.query["categories.name"]);
+    next();
+    return;
+  }
   req.gamesArray = await games.find({}).populate("categories").populate({path: "users", select: "-password" });
   next();
 };
@@ -98,6 +101,14 @@ const checkIsGameExists = async (req, res, next) => {
   }
 }; 
 
+const checkIsVoteRequest = async (req, res, next) => {
+  // Если в запросе присылают только поле users
+if (Object.keys(req.body).length === 1 && req.body.users) {
+  req.isVoteRequest = true;
+}
+next();
+};
+
 
 module.exports = {
   findAllGames,
@@ -108,7 +119,8 @@ module.exports = {
   checkEmptyFields,
   checkIfCategoriesAvaliable,
   checkIfUsersAreSafe,
-  checkIsGameExists
+  checkIsGameExists,
+  checkIsVoteRequest
 }
 
 

@@ -52,7 +52,8 @@ const deleteUser = async (req, res, next) => {
 const checkEmptyNameAndEmailAndPassword = async (req, res, next) => {
   if (
     !req.body.email ||
-    !req.body.password
+    !req.body.password ||
+    !req.bosy.username 
   ) {
     res.setHeader("Content-Type", "application/json");
         res.status(400).send(JSON.stringify({ message: "Заполните все поля" }));

@@ -12,7 +12,7 @@ const createUser = async (req, res, next) => {
   console.log("POST /users");
   try {
     console.log(req.body);
-    req.user = await games.create(req.body);
+    req.user = await users.create(req.body);
     next();
   } catch (error) {
     res.status(400).send("Error creating user");
@@ -53,7 +53,7 @@ const checkEmptyNameAndEmailAndPassword = async (req, res, next) => {
   if (
     !req.body.email ||
     !req.body.password ||
-    !req.bosy.username 
+    !req.body.username 
   ) {
     res.setHeader("Content-Type", "application/json");
         res.status(400).send(JSON.stringify({ message: "Заполните все поля" }));
@@ -85,6 +85,21 @@ const hashPassword = async (req, res, next) => {
   }
 };
 
+
+const checkIsUserExists = async (req, res, next) => {
+  //console.log(req.gamesArray);
+  const isInArray = req.usersArray.find((user) => {
+      return req.body.email === user.email;
+  });
+  //console.log(isInArray);
+  if (isInArray) {
+      res.status(400).send({ message: "Пользователь с таким названием уже существует" });
+  } else {
+      next();
+  }
+};
+
+
 module.exports = {
   findAllUsers,
   createUser,
@@ -93,5 +108,6 @@ module.exports = {
   deleteUser,
   checkEmptyNameAndEmailAndPassword,
   checkEmptyNameAndEmail,
-  hashPassword
+  hashPassword,
+  checkIsUserExists
 }

@@ -1,5 +1,7 @@
 const allowedCors = [
-    'pindie-games.nomoredomainswork.ru'
+    'https://pindie-games.nomoredomainswork.ru',
+    'http://localhost:3001',
+    'http://localhost:3000'
 ];
 
 function cors(req, res, next) {

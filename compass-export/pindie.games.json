@@ -1,18 +1,5 @@
 [{
   "_id": {
-    "$oid": "66374bc3dde2338359637004"
-  },
-  "title": "Half-Life 2",
-  "description": "Готовка хэдкрабовых чипсов",
-  "developer": "gabbben",
-  "image": "https://cdn.kanobu.ru/games/44/dc094bbaf21142219d91d85cff0fc9ac",
-  "link": "https://kanobu.ru/games/half-life-2/",
-  "users": [],
-  "categories": [],
-  "__v": 0
-},
-{
-  "_id": {
     "$oid": "66001dcb912e93034cf26a59"
   },
   "title": "Crystal Keeper",

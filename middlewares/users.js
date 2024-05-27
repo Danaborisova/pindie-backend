@@ -2,7 +2,6 @@ const users = require('../models/user');
 const bcrypt = require("bcryptjs"); 
 
 const findAllUsers = async (req, res, next) => {
-    // По GET-запросу на эндпоинт /users найдём все документы пользователей
     console.log("Миддлвар! Ищем всех юзеров!")
   req.usersArray = await users.find({}, { password: 0 });
   next();
@@ -12,7 +11,7 @@ const createUser = async (req, res, next) => {
   console.log("POST /users");
   try {
     console.log(req.body);
-    req.user = await games.create(req.body);
+    req.user = await users.create(req.body);
     next();
   } catch (error) {
     res.status(400).send("Error creating user");
@@ -21,11 +20,10 @@ const createUser = async (req, res, next) => {
 
 const findUserById = async (req, res, next) => {
   try {
-    req.user = await users.findById(req.params.id, { password: 0 });
+    req.user = await users.findById(req.params.id);
     next();
   } catch (error) {
-    res.setHeader("Content-Type", "application/json");
-    res.status(404).send(JSON.stringify({ message: "Пользователь не найден" }));
+    res.status(404).send({ message: "User not found" });
   }
 };
 
@@ -34,8 +32,7 @@ const updateUser = async (req, res, next) => {
     req.user = await users.findByIdAndUpdate(req.params.id, req.body);
     next();
   } catch (error) {
-    res.setHeader("Content-Type", "application/json");
-    res.status(400).send(JSON.stringify({ message: "Ошибка обновления пользователей" }));
+    res.status(400).send({ message: "Error updating user" });
   }
 }; 
 
@@ -44,18 +41,17 @@ const deleteUser = async (req, res, next) => {
     req.user = await users.findByIdAndDelete(req.params.id);
     next();
   } catch (error) {
-    res.setHeader("Content-Type", "application/json");
-        res.status(400).send(JSON.stringify({ message: "Ошибка удаления пользователя" }));
+    res.status(400).send({ message: "Error deleting user" });
   }
 }; 
 
 const checkEmptyNameAndEmailAndPassword = async (req, res, next) => {
   if (
     !req.body.email ||
-    !req.body.password
+    !req.body.password ||
+    !req.body.username 
   ) {
-    res.setHeader("Content-Type", "application/json");
-        res.status(400).send(JSON.stringify({ message: "Заполните все поля" }));
+    res.status(400).send({ message: "Введите имя, email и пароль" });
   } else {
     next();
   }
@@ -66,8 +62,7 @@ const checkEmptyNameAndEmail = async (req, res, next) => {
     !req.body.username ||
     !req.body.email
   ) {
-    res.setHeader("Content-Type", "application/json");
-        res.status(400).send(JSON.stringify({ message: "Заполните все поля" }));
+    res.status(400).send({ message: "Введите имя и email" });
   } else {
     next();
   }
@@ -84,6 +79,20 @@ const hashPassword = async (req, res, next) => {
   }
 };
 
+
+const checkIsUserExists = async (req, res, next) => {
+  const isInArray = req.usersArray.find((user) => {
+      return req.body.email === user.email;
+  });
+  //console.log(isInArray);
+  if (isInArray) {
+      res.status(400).send({ message: "Пользователь с таким названием уже существует" });
+  } else {
+      next();
+  }
+};
+
+
 module.exports = {
   findAllUsers,
   createUser,
@@ -92,5 +101,6 @@ module.exports = {
   deleteUser,
   checkEmptyNameAndEmailAndPassword,
   checkEmptyNameAndEmail,
-  hashPassword
+  hashPassword,
+  checkIsUserExists
 }

@@ -1,7 +1,5 @@
 const sendAllGames = (req, res) => {
-  console.log("Контроллер включён! отправляем список игр в ответ на запрос!")
   res.setHeader('Content-Type', 'application/json');
-  // Вернём найденные игры в формате JSON
   res.end(JSON.stringify(req.gamesArray));
 };
 
@@ -17,7 +15,7 @@ const sendGameById = (req, res) => {
 
 const sendGameUpdated = (req, res) => {
   res.setHeader("Content-Type", "application/json");
-  res.status(200).send(JSON.stringify({ message: "Игра обновлена" }));
+  res.end("Игра обновлена");
 }; 
 
 const sendGameDeleted = (req, res) => {

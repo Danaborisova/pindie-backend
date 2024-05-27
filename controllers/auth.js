@@ -13,11 +13,14 @@ const login = (req, res) => {
       return { user, token };
     })
     .then(({ user, token }) => {
-      res
-        .status(200)
-        .send({ _id: user._id, username: user.username, email: user.email, jwt: token });
+      res.status(200).send({
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        jwt: token
+      });
     })
-    .catch(error => {
+    .catch((error) => {
       res.status(401).send({ message: error.message });
     });
 };
@@ -36,7 +39,7 @@ const sendIndex = (req, res) => {
 
 const sendDashboard = (req, res) => {
   res.sendFile(path.join(__dirname, "../public/admin/dashboard.html"));
-}; 
+};
 
 module.exports = {
   login,

@@ -1,12 +1,10 @@
 const games = require("../models/game");
 
 const findAllGames = async (req, res, next) => {
-  if(req.query["categories.name"]) { 
-    req.gamesArray = await games.findGameByCategory(req.query["categories.name"]);
-    next();
-    return;
-  }
-  req.gamesArray = await games.find({}).populate("categories").populate({path: "users", select: "-password" });
+  req.gamesArray = await games.find({}).populate("categories").populate({
+    path: "users",
+    select: "-password",
+  });
   next();
 };
 
@@ -26,8 +24,7 @@ const findGameById = async (req, res, next) => {
     req.game = await games.findById(req.params.id).populate("categories").populate({path: "users", select: "-password" });
     next();
   } catch (error) {
-    res.setHeader("Content-Type", "application/json");
-    res.status(404).send(JSON.stringify({ message: "Игра не найдена" }));
+    res.status(404).send({ message: "Game not found" });
   }
 };
 
@@ -36,8 +33,7 @@ const updateGame = async (req, res, next) => {
     req.game = await games.findByIdAndUpdate(req.params.id, req.body);
     next();
   } catch (error) {
-    res.setHeader("Content-Type", "application/json");
-    res.status(400).send(JSON.stringify({ message: "Ошибка обновления игры" }));
+    res.status(400).send({ message: "Error updating game" });
   }
 }; 
 
@@ -46,8 +42,7 @@ const deleteGame = async (req, res, next) => {
     req.game = await games.findByIdAndDelete(req.params.id);
     next();
   } catch (error) {
-    res.setHeader("Content-Type", "application/json");
-        res.status(400).send(JSON.stringify({ message: "Ошибка удаления игры" }));
+    res.status(400).send({ message: "Error deleting game" });
   }
 }; 
 
@@ -57,12 +52,8 @@ const checkEmptyFields = async (req, res, next) => {
 			return;
 		}
 		if (!req.body.title || !req.body.description || !req.body.image || !req.body.link || !req.body.developer) {
-			// Если какое-то из полей отсутствует, то не будем обрабатывать запрос дальше,
-			// а ответим кодом 400 — данные неверны.
-			res.setHeader("Content-Type", "application/json");
-			res.status(400).send(JSON.stringify({ message: "Заполни все поля" }));
+			res.status(400).send({ message: "Заполните все поля" });
 		} else {
-			// Если всё в порядке, то передадим управление следующим миддлварам
 			next();
 		}
 	};
@@ -74,8 +65,10 @@ const checkEmptyFields = async (req, res, next) => {
 		}
 		// Проверяем наличие жанра у игры
 		if (!req.body.categories || req.body.categories.length === 0) {
-			res.setHeader("Content-Type", "application/json");
-			res.status(400).send(JSON.stringify({ message: "Выбери хотя бы одну категорию" }));
+      res.headers = { "Content-Type": "application/json" };
+      res.status(400).send({ message: "Выберите хотя бы одну категорию" });
+      /*res.setHeader("Content-Type", "application/json");
+			res.status(400).send(JSON.stringify({ message: "Выбери хотя бы одну категорию" })); */
 		} else {
 			next();
 		}
@@ -94,7 +87,6 @@ const checkEmptyFields = async (req, res, next) => {
 			next();
 			return;
 		} else {
-			res.setHeader("Content-Type", "application/json");
 			res.status(400).send(
 				JSON.stringify({ message: "Нельзя удалять пользователей или добавлять больше одного пользователя" })
 			);
@@ -111,15 +103,14 @@ const checkEmptyFields = async (req, res, next) => {
 	};
 
   const checkIsGameExists = async (req, res, next) => {
-    //console.log(req.gamesArray);
     const isInArray = req.gamesArray.find((game) => {
-        return req.body.title === game.title;
+      return req.body.title === game.title;
     });
-    //console.log(isInArray);
+    console.log(isInArray);
     if (isInArray) {
-        res.status(400).send({ message: "Игра с таким названием уже существует" });
+      res.status(400).send({ message: "Игра с таким названием уже существует" });
     } else {
-        next();
+      next();
     }
 };
 
